@@ -1,0 +1,32 @@
+<!-- 
+The 'Sdk' attribute tells the compiler what kind of app to compile.
+In this event, it's the general development class library as nothing
+is specified after "Microsoft.NET.Sdk.*"
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+	<!-- 
+	Properties are name-value pairs that can be used to configure builds.
+	Properties are useful for passing values to tasks, evaluating conditions,
+	and storing values that will be referenced throughout the project file.
+
+	Continue reading at (MSBuild properties)[https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-properties?view=vs-2019]
+	-->
+	<PropertyGroup>
+		<!--
+		The unique identifier of this project.  Typically this is the root namespace.
+		The host system uses this for the application's identity.
+		-->
+		<AssemblyName>Engine</AssemblyName>
+
+		<!--
+		Similar to 'AssemblyName', this is the friendly display name the host system
+		uses for the application.
+		-->
+		<AssemblyTitle>$(AssemblyName)</AssemblyTitle>
+	</PropertyGroup>
+
+	<!-- Import further properties and items into this project. -->
+	<Import Project="..\_Import.csproj" />
+	<Import Project="..\_ClassLib.csproj" />
+
+</Project>

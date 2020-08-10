@@ -1,0 +1,15 @@
+<Project>
+
+	<PropertyGroup>
+		<Developers>
+			Janelle Rosario (janelle.rosario@gmail.com);
+			Sour (sour@sour.codes)
+		</Developers>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Authors">
+		<Authors Condition=" '$(Authors)' == '' ">$(Developers)</Authors>
+		<Authors Condition=" '$(Authors)' != '' ">$(Authors);$(Developers)</Authors>
+	</PropertyGroup>
+
+</Project>
