@@ -1,0 +1,56 @@
+<Project>
+
+	<PropertyGroup>
+		<!--
+		'TargetFrameworks' lists the versions of the apps to be created.  Every project has their specific target framework(s) to
+		build on.
+		See (Target frameworks in SDK-style projects)[https://docs.microsoft.com/en-us/dotnet/standard/frameworks]
+
+		'.NET Standard' is a formal specification of .NET APIs that are intended to be available on all .NET implementations.
+		See (.NET Standard)[https://docs.microsoft.com/en-us/dotnet/standard/net-standard]
+
+		The higher the .NET Standard version, the more APIs are available to the framework; however, lower versions typically
+		have a further end-user reach as older devices that no longer receive updates from their manufacturers may still
+		support lower versions.
+
+		Having a range of supported frameworks bridges the need for newer APIs as the framework upgrades while not leaving
+		older versions behind.  There are times that a higher version no longer supports obsolete code or an older version
+		does not have code that a newer version has.  This can be addressed by writing conditional code for their those situations.
+
+		In the example below, two class libraries will be made by the referencing project.
+		-->
+		<TargetFrameworks>net5.0;netcoreapp3.1;netcoreapp2.1</TargetFrameworks>
+
+		<!-- 
+		Prevents the compiler from packing the project into a NuGet package if a publish task is issued.
+		NuGet is synonymous to Node as a public package manager except for .NET.
+		-->
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+		<PackageReference Include="xunit" Version="2.4.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+		<PackageReference Include="coverlet.collector" Version="1.3.0">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<DotNetCliToolReference Include="dotnet-xunit" Version="2.4.0-*" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.*" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
+		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.*" />
+	</ItemGroup>
+
+</Project>
