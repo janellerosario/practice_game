@@ -4,6 +4,12 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
+	///	<summary>
+	///	Represents a game engine.
+	///	</summary>
+	///	<remarks>
+	///	<see cref="GameEngine" /> is used by derrived types to sychronize game logic by execution of frames.
+	///	</remarks>
 	public abstract class GameEngine
 		: IDisposable
 	{
@@ -11,6 +17,12 @@ namespace Engine
 
 		private CancellationTokenSource _cts;
 
+		///	<summary>
+		///	Instantiates a new instance of <see cref="GameEngine" />.
+		///	</summary>
+		///	<param name="options">
+		///	The options used to instantiate this instance of <see cref="GameEngine" />.
+		///	</param>
 		protected GameEngine(GameEngineOptions options)
 		{
 			_options = options
@@ -132,6 +144,17 @@ namespace Engine
 		#region IDisposable
 
 		private bool disposedValue;
+
+		///	<summary>
+		///	Disposes this instance of <see cref="GameEngine" /> and associated resources.
+		///	</summary>
+		///	<remarks>
+		///	Derived types should override this method if it has resources to dispose of.
+		///	</remarks>
+		///	<param name="disposing">
+		///	<c>true</c> if disposing managed state as well as unmanaged resources; otherwise
+		///	<c>false</c> if disposing only unmanaged resources.
+		///	</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposedValue)
@@ -154,6 +177,9 @@ namespace Engine
 		//     Dispose(disposing: false);
 		// }
 
+		///	<summary>
+		///	Disposes this instance of <see cref="GameEngine" /> and associated resources.
+		///	</summary>
 		public void Dispose()
 		{
 			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
