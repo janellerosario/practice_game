@@ -4,23 +4,13 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
-	public class GameEngine
+	public abstract class GameEngine
 	{
 		private GameEngineOptions _options;
 
 		private CancellationTokenSource _cts;
 
-		///	<summary>
-		///	Occurs when the engine is rendering a frame.
-		///	</summary>
-		public event EventHandler<RenderingEventArgs> Rendering;
-
-		///	<summary>
-		///	Occurs when the engine is updating frame.
-		///	</summary>
-		public event EventHandler<UpdatingEventArgs> Updating;
-
-		public GameEngine(GameEngineOptions options)
+		protected GameEngine(GameEngineOptions options)
 		{
 			_options = options
 				?? throw new ArgumentNullException(nameof(options));
@@ -99,21 +89,19 @@ namespace Engine
 		}
 
 		///	<summary>
-		///	Invokes <see cref="Updating" /> whenever <see cref="GameEngine" /> is updating a frame.
+		///	Invoked when <see cref="GameEngine" /> is updating a frame.
 		///	</summary>
-		protected void OnUpdating(UpdatingEventArgs e)
-			=> Updating?.Invoke(this, e);
+		protected abstract void OnUpdating(UpdatingEventArgs e);
 
 		///	<summary>
-		///	Invokes <see cref="Rendering" /> whenever <see cref="GameEngine" /> is rendering a frame.
+		///	Invoked when <see cref="GameEngine" /> is rendering a frame.
 		///	</summary>
-		protected void OnRendering(RenderingEventArgs e)
-			=> Rendering?.Invoke(this, e);
+		protected abstract void OnRendering(RenderingEventArgs e);
 
 		///	<summary>
 		///	Causes the <see cref="GameEngine" /> to begin its loop.
 		///	</summary>
-		public void Start()
+		public virtual void Start()
 		{
 			if (_cts != null)
 				return;
@@ -131,7 +119,7 @@ namespace Engine
 		///	<summary>
 		///	Causes the <see cref="GameEngine" /> to end its loop.
 		///	</summary>
-		public void Stop()
+		public virtual void Stop()
 		{
 			if (_cts == null)
 				return;

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Engine.Tests.Engines;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -45,15 +46,13 @@ namespace Engine.Tests
 
 			var updateCount = 0;
 			var renderCount = 0;
-			var engine = new GameEngine(options);
-
-			//	Add an event handler for the updating event.
-			engine.Updating += (sender, e)
-				=> updateCount++;
-
-			//	Add an event handler for the rendering event.
-			engine.Rendering += (sender, e)
-				=> renderCount++;
+			var engine = new BareMinimumEngine(
+				options,
+				//	On every frame update, increment the count.
+				e => updateCount++,
+				//	On every frame render, increment the count.
+				e => renderCount++
+			);
 
 			//	Start the engine.
 			engine.Start();
@@ -67,6 +66,9 @@ namespace Engine.Tests
 			_output.WriteLine($"Update count: {updateCount}");
 			_output.WriteLine($"Render count: {renderCount}");
 
+			//	Tests passes if both 'Updating' and 'Rendering' events
+			//	are triggered at the specified frame rate.
+			//	A padding of five frames is allowed.
 			Assert.True(
 				updateCount >= options.FrameRate
 				&& updateCount < options.FrameRate + 5
