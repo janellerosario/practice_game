@@ -3,7 +3,7 @@ using System;
 namespace Engine
 {
 	///	<summary>
-	///	Provides data for the <see cref="GameEngine.Updating" /> event.
+	///	Provides data for the <see cref="GameEngine.OnUpdating(UpdatingEventArgs)" /> method.
 	///	</summary>
 	public class UpdatingEventArgs
 		: EventArgs
