@@ -1,7 +1,7 @@
 <Project>
 
-	<Import Project="_Author.csproj" />
-	<Import Project="_Version.csproj" />
+	<Import Project="_Author.targets" />
+	<Import Project="_Version.targets" />
 
 	<PropertyGroup>
 		<!--
@@ -22,5 +22,10 @@
 		In case we forget to set an 'AssemblyTitle' in the referring project, use 'AssemblyName', if set.
 		-->
 		<AssemblyTitle Condition=" '$(AssemblyName)' != '' And '$(AssemblyTitle)' == '' ">$(AssemblyName)</AssemblyTitle>
+
+		<BuildInParallel Condition=" '$(BuildInParallel)' == '' ">false</BuildInParallel>
 	</PropertyGroup>
+
+	<!-- <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" /> -->
+
 </Project>
