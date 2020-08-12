@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<ItemGroup>
+		<ProjectReference Include="..\Engine\Engine.csproj" />
+	</ItemGroup>
+
+	<!-- Import further properties and items into this project. -->
+	<Import Project="..\_Import.targets" />
+	<Import Project="..\_BlazorWasm.targets" />
+
+</Project>

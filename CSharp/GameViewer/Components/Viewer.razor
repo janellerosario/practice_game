@@ -1,0 +1,109 @@
+@inherits ComponentBase
+<canvas
+	id="@CanvasId"
+	class="viewer"
+	tabindex="1"
+	@onkeydown="OnCanvasKeyDown"
+	@onkeypress="OnCanvasKeyPress"
+	@onkeyup="OnCanvasKeyUp"
+>
+
+</canvas>
+@code
+{
+	//	Generate a new GUID on initialization.
+	private readonly Guid _canvasGuid
+		= Guid.NewGuid();
+
+	//	Get the GUID for JavaScript.
+	private string CanvasId
+		=> $"{nameof(Viewer)}_{_canvasGuid:N}";
+
+	[Parameter]
+	public GameEngine GameEngine { get; set; }
+	
+	///	<summary>
+	///	Invokes when the component initializes.
+	///	</summary>
+	///	<seealso>
+	///	[ASP.NET Core Blazor lifecycle - Lifecycle methods](https://docs.microsoft.com/en-us/aspnet/core/blazor/components/lifecycle?view=aspnetcore-3.1#lifecycle-methods)
+	///	</seealso>
+	protected override void OnInitialized()
+	{
+		Console.WriteLine($"Created {CanvasId}");
+	}
+
+	#region User Input Event Handling
+
+	/*
+		This region captures user input when the component has focus.
+	*/
+
+	#region Keyboard Event Handling
+
+	///	<summary>
+	///	Invoked when the canvas receives a <c>onkeydown</c> event.
+	///	</summary>
+	///	<param name="e">
+	///	The <see cref="KeyboardEventArgs" /> providing information about the keyboard event being raised.
+	///	</param>
+	///	<seealso>
+	///	[KeyboardEventArgs Class](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.web.keyboardeventargs)
+	///	</seealso>
+	protected virtual void OnCanvasKeyDown(KeyboardEventArgs e)
+	{
+		Console.WriteLine($"{nameof(OnCanvasKeyDown)} invoked!");
+		Console.WriteLine($"\t{nameof(e.Key)}: {e.Key}");
+		Console.WriteLine($"\t{nameof(e.ShiftKey)}? {e.ShiftKey}");
+		Console.WriteLine($"\t{nameof(e.AltKey)}? {e.AltKey}");
+		Console.WriteLine($"\t{nameof(e.CtrlKey)}? {e.CtrlKey}");
+		Console.WriteLine($"\t{nameof(e.MetaKey)}? {e.MetaKey}");
+		Console.WriteLine();
+	}
+
+	///	<summary>
+	///	Invoked when the canvas receives a <c>onkeypress</c> event.
+	///	</summary>
+	///	<param name="e">
+	///	The <see cref="KeyboardEventArgs" /> providing information about the keyboard event being raised.
+	///	</param>
+	///	<seealso>
+	///	[KeyboardEventArgs Class](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.web.keyboardeventargs)
+	///	</seealso>
+
+	protected virtual void OnCanvasKeyPress(KeyboardEventArgs e)
+	{
+		Console.WriteLine($"{nameof(OnCanvasKeyPress)} invoked!");
+		Console.WriteLine($"\t{nameof(e.Key)}: {e.Key}");
+		Console.WriteLine($"\t{nameof(e.ShiftKey)}? {e.ShiftKey}");
+		Console.WriteLine($"\t{nameof(e.AltKey)}? {e.AltKey}");
+		Console.WriteLine($"\t{nameof(e.CtrlKey)}? {e.CtrlKey}");
+		Console.WriteLine($"\t{nameof(e.MetaKey)}? {e.MetaKey}");
+		Console.WriteLine();
+	}
+
+	///	<summary>
+	///	Invoked when the canvas receives a <c>onkeyup</c> event.
+	///	</summary>
+	///	<param name="e">
+	///	The <see cref="KeyboardEventArgs" /> providing information about the keyboard event being raised.
+	///	</param>
+	///	<seealso>
+	///	[KeyboardEventArgs Class](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.components.web.keyboardeventargs)
+	///	</seealso>
+
+	protected virtual void OnCanvasKeyUp(KeyboardEventArgs e)
+	{
+		Console.WriteLine($"{nameof(OnCanvasKeyUp)} invoked!");
+		Console.WriteLine($"\t{nameof(e.Key)}: {e.Key}");
+		Console.WriteLine($"\t{nameof(e.ShiftKey)}? {e.ShiftKey}");
+		Console.WriteLine($"\t{nameof(e.AltKey)}? {e.AltKey}");
+		Console.WriteLine($"\t{nameof(e.CtrlKey)}? {e.CtrlKey}");
+		Console.WriteLine($"\t{nameof(e.MetaKey)}? {e.MetaKey}");
+		Console.WriteLine();
+	}
+
+	#endregion
+
+	#endregion
+}

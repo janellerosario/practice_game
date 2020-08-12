@@ -1,0 +1,22 @@
+[
+	{
+		"outputFileName": "wwwroot/css/app.min.css",
+		"inputFiles": [
+			"wwwroot/library/bulma/css/bulma.css",
+			"wwwroot/library/fortawesome/fontawesome-pro/css/all.css",
+			"wwwroot/css/app.css"
+		]
+	},
+	{
+		"outputFileName": "wwwroot/js/app.min.js",
+		"inputFiles": [
+			"wwwroot/library/fortawesome/fontawesome-pro/js/all.js",
+			"wwwroot/js/app.js"
+		],
+		"minify": {
+			"enabled": true,
+			"renameLocals": true
+		},
+		"sourceMap": false
+	}
+]

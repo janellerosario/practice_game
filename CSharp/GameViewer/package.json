@@ -1,0 +1,13 @@
+{
+	"name": "gameviewer",
+	"author": {
+		"name": "Sour",
+		"email": "sour@sour.codes",
+		"url": "https://christopherwilson.nyc"
+	},
+	"private": true,
+	"dependencies": {
+		"@fortawesome/fontawesome-pro": "^5.14.0",
+		"bulma": "^0.9.0"
+	}
+}
