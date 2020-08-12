@@ -1,0 +1,43 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch and Debug GameViewer (Chrome)",
+			"request": "launch",
+			"type": "blazorwasm",
+			"cwd": "${workspaceFolder}/CSharp/GameViewer",
+			"timeout": 60000
+		},
+		{
+			"name": "Launch and Debug GameViewer (Edge)",
+			"request": "launch",
+			"type": "blazorwasm",
+			"cwd": "${workspaceFolder}/CSharp/GameViewer",
+			"timeout": 60000,
+			"browser": "edge"
+		},
+		{
+			"name": "Attach to GameViewer",
+			"request": "attach",
+			"type": "pwa-msedge",
+			"port": 9222,
+			"webRoot": "${workspaceFolder}/CSharp/GameViewer/wwwroot",
+			"url": "https://localhost:5001"
+		},
+		{
+			"name": "Launch and Debug GameViewer - Stand Alone (netstandard2.1 - x64)",
+			"type": "blazorwasm",
+			"request": "launch",
+			"hosted": true,
+			"program": "${workspaceFolder}/CSharp/GameViewer/bin/Debug/netstandard2.1/win-x64/GameViewer.dll",
+			"cwd": "${workspaceFolder}/CSharp/GameViewer",
+			"preLaunchTask": "publish GameViewer (netstandard2.1 - x64)",
+			"browser": "edge",
+			"trace": true,
+			"timeout": 60000
+		}
+	]
+}
