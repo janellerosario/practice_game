@@ -14,6 +14,6 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-#NPM
+# NPM
 node_modules/
-wwwroot/library/**/*
+**/wwwroot/library/
