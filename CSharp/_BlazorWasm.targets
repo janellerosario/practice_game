@@ -1,0 +1,89 @@
+<Project>
+
+	<PropertyGroup>
+		<!--
+		'TargetFrameworks' lists the versions of the apps to be created.  Every project has their specific target framework(s) to
+		build on.
+		See (Target frameworks in SDK-style projects)[https://docs.microsoft.com/en-us/dotnet/standard/frameworks]
+
+		'.NET Standard' is a formal specification of .NET APIs that are intended to be available on all .NET implementations.
+		See (.NET Standard)[https://docs.microsoft.com/en-us/dotnet/standard/net-standard]
+
+		The higher the .NET Standard version, the more APIs are available to the framework; however, lower versions typically
+		have a further end-user reach as older devices that no longer receive updates from their manufacturers may still
+		support lower versions.
+
+		Having a range of supported frameworks bridges the need for newer APIs as the framework upgrades while not leaving
+		older versions behind.  There are times that a higher version no longer supports obsolete code or an older version
+		does not have code that a newer version has.  This can be addressed by writing conditional code for their those situations.
+
+		In the example below, two class libraries will be made by the referencing project.
+		-->
+		<!-- <TargetFrameworks>net5.0;netstandard2.1</TargetFrameworks> -->
+		
+		<TargetFramework>netstandard2.1</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+		<RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+		<UseBlazorWebAssembly>true</UseBlazorWebAssembly>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+		<RazorLangVersion>3.0</RazorLangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="BuildBundlerMinifier" Version="3.0.415" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0-rc*" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.0-rc*" PrivateAssets="all" />
+		<PackageReference Include="System.Net.Http.Json" Version="5.0.0-rc*" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.*" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.*" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.*" PrivateAssets="all" />
+		<PackageReference Include="System.Net.Http.Json" Version="3.*" />
+	</ItemGroup>
+
+	<!--
+		Copy client-side libraries.
+	-->
+	<ItemGroup>
+		<ClientLibraries Include="node_modules\**\*" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="@(ClientLibraries)" CopyToPublishDirectory="Never">
+			<Link>wwwroot\lib\$([System.String]::Copy("%(RecursiveDir)").Replace("@", ""))%(FileName)%(Extension)</Link>
+		</None>
+	</ItemGroup>
+
+	<Target Name="CopyClientLibraries" BeforeTargets="Build">
+		<Copy SourceFiles="@(ClientLibraries)" DestinationFiles="@(ClientLibraries-&gt;'wwwroot\library\%(RecursiveDir)%(Filename)%(Extension)'-&gt;Replace('@', ''))" />
+	</Target>
+
+	<!--
+		Publish index depending on configuration.
+	-->
+
+	<ItemGroup>
+		<!-- <None
+			Include="wwwroot\**\*.$(Configuration).html"
+			Link="$([System.String]::Copy('%(RecursiveDir)%(Filename)%(Extension)').Replace('.$(Configuration)%(Extension)', '%(Extension)', true, null))"
+			CopyToOutputDirectory="Always"
+			CopyToPublishDirectory="Always"
+			/> -->
+		<!-- <None
+			Include="wwwroot\**\*.$(Configuration).html"
+			Link="&quot;%(RecursiveDir)%(Filename)%(Extension)&quot;.Replace(&quot;.$(Configuration)%(Extension)&quot;, &quot;%(Extension)&quot;, true)"
+			CopyToOutputDirectory="Always"
+			CopyToPublishDirectory="Always"
+			/> -->
+	</ItemGroup>
+
+</Project>

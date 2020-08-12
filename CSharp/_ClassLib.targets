@@ -17,7 +17,7 @@
 		older versions behind.  There are times that a higher version no longer supports obsolete code or an older version
 		does not have code that a newer version has.  This can be addressed by writing conditional code for their those situations.
 
-		In the example below, two class libraries will be made by the referencing project.
+		In the example below, three class libraries will be made by the referencing project.
 		-->
 		<TargetFrameworks>net5.0;netstandard2.1;netstandard2.0</TargetFrameworks>
 	</PropertyGroup>
