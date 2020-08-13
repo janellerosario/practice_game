@@ -9,14 +9,12 @@
 			"request": "launch",
 			"type": "blazorwasm",
 			"cwd": "${workspaceFolder}/CSharp/GameViewer",
-			"timeout": 60000
 		},
 		{
 			"name": "Launch and Debug GameViewer (Edge)",
 			"request": "launch",
 			"type": "blazorwasm",
 			"cwd": "${workspaceFolder}/CSharp/GameViewer",
-			"timeout": 60000,
 			"browser": "edge"
 		},
 		{
@@ -37,7 +35,6 @@
 			"preLaunchTask": "publish GameViewer (netstandard2.1 - x64)",
 			"browser": "edge",
 			"trace": true,
-			"timeout": 60000
 		}
 	]
 }
