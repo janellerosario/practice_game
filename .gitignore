@@ -17,3 +17,6 @@ bld/
 # NPM
 node_modules/
 **/wwwroot/library/
+
+# Logs
+**/*.log
