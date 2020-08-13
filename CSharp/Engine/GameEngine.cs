@@ -67,12 +67,18 @@ namespace Engine
 				//	'Then' is the moment in time now before any computation within this frame.
 				var then = DateTime.Now;
 				var expiration = then.AddMilliseconds(millisecondsPerFrame);
+				var frameCancellationTokenSource = new CancellationTokenSource(expiration - then);
+
 				//	Dispatch the 'Updating' event.
 				var updatingEvent = new UpdatingEventArgs(
 					frameId,
 					expiration
 				);
-				OnUpdating(updatingEvent);
+
+				await Task.Run(
+					() => OnUpdating(updatingEvent),
+					frameCancellationTokenSource.Token
+				);
 
 				//	'UpdateNow' is the moment in time now after updates of objects in this engine.
 				var updateNow = DateTime.Now;
@@ -94,7 +100,11 @@ namespace Engine
 						frameId,
 						expiration
 					);
-					OnRendering(renderingEvent);
+
+					await Task.Run(
+						() => OnRendering(renderingEvent),
+						frameCancellationTokenSource.Token
+					);
 
 #if DEBUG
 
@@ -113,6 +123,8 @@ namespace Engine
 					//	Rendering of this frame expired.
 
 					Console.WriteLine($"Frame {frameId} expired, exceeding {offset.TotalMilliseconds - threshold}ms!  Skipping rendering!");
+
+					continue;
 				}
 
 				var finalNow = DateTime.Now;
