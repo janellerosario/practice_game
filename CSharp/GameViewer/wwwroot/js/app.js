@@ -64,17 +64,7 @@
 
 	(function () {
 		class BaseClass {
-			static StaticConstructorExecuted
-				= false;
-
 			constructor() {
-				this
-					.constructor
-					.StaticConstructor()
-					;
-			}
-
-			static StaticConstructor() {
 
 			}
 		}
