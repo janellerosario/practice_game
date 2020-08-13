@@ -1,11 +1,18 @@
 @inherits ComponentBase
+@inject IJSRuntime JSRuntime;
 <canvas
-	id="@CanvasId"
+	id="@Id"
 	class="viewer"
 	tabindex="1"
-	@onkeydown="OnCanvasKeyDown"
-	@onkeypress="OnCanvasKeyPress"
-	@onkeyup="OnCanvasKeyUp"
+	@onkeydown="GameEngine.OnCanvasKeyDown"
+	@onkeypress="GameEngine.OnCanvasKeyPress"
+	@onkeyup="GameEngine.OnCanvasKeyUp"
+	@onmousedown="GameEngine.OnCanvasMouseDown"
+	@onmousemove="GameEngine.OnCanvasMouseMove"
+	@onmouseout="GameEngine.OnCanvasMouseOut"
+	@onmouseover="GameEngine.OnCanvasMouseOver"
+	@onmouseup="GameEngine.OnCanvasMouseUp"
+	@onmousewheel="GameEngine.OnCanvasMouseWheel"
 >
 
 </canvas>
@@ -16,12 +23,12 @@
 		= Guid.NewGuid();
 
 	//	Get the GUID for JavaScript.
-	private string CanvasId
+	public string Id
 		=> $"{nameof(Viewer)}_{_canvasGuid:N}";
 
 	[Parameter]
-	public GameEngine GameEngine { get; set; }
-	
+	public GameEngineViewer GameEngine { get; set; }
+
 	///	<summary>
 	///	Invokes when the component initializes.
 	///	</summary>
@@ -30,7 +37,27 @@
 	///	</seealso>
 	protected override void OnInitialized()
 	{
-		Console.WriteLine($"Created {CanvasId}");
+		Console.WriteLine($"Created {Id}");
+
+		var options = new GameEngineOptions
+		{
+			FrameRate = 30
+		};
+
+		GameEngine = new UnloadedGameEngineViewer(
+			options,
+			JSRuntime,
+			Id
+		);
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			Console.WriteLine($"Starting game engine {GameEngine.GetType().Name}.");
+			GameEngine.Start();
+		}
 	}
 
 	#region User Input Event Handling
@@ -102,6 +129,10 @@
 		Console.WriteLine($"\t{nameof(e.MetaKey)}? {e.MetaKey}");
 		Console.WriteLine();
 	}
+
+	#endregion
+
+	#region Mouse Event Handling
 
 	#endregion
 

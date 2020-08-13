@@ -87,6 +87,13 @@ namespace Engine
 						expiration
 					);
 					OnRendering(renderingEvent);
+
+#if DEBUG
+
+					RenderDebugInformation();
+
+#endif
+
 				}
 
 				var syncOffset = updateNow - sync;
@@ -111,6 +118,15 @@ namespace Engine
 		///	</summary>
 		protected abstract void OnRendering(RenderingEventArgs e);
 
+#if DEBUG
+
+		protected virtual void RenderDebugInformation()
+		{
+
+		}
+
+#endif
+
 		///	<summary>
 		///	Causes the <see cref="GameEngine" /> to begin its loop.
 		///	</summary>
@@ -126,7 +142,7 @@ namespace Engine
 			//	The 'Loop' method is executed on its own thread, which allows this thread to resume after
 			//	it executes the 'Loop' thread.
 			//	See (Managed Threading)[https://docs.microsoft.com/en-us/dotnet/standard/threading/]
-			Task.Run(Loop);
+			Task.Run(Loop, _cts.Token);
 		}
 
 		///	<summary>
