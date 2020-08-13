@@ -5,6 +5,8 @@ using Microsoft.JSInterop;
 using System.Reflection;
 using System.Threading;
 using GameViewer.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GameViewer.JSInteroperability
 {
@@ -40,6 +42,54 @@ namespace GameViewer.JSInteroperability
 			);
 		}
 
+		public static async Task StrokeRectangleAsync(
+			IJSRuntime jSRuntime,
+			string canvasId,
+			double x,
+			double y,
+			double width,
+			double height,
+			double? lineWidth = null,
+			string strokeStyle = null,
+			IEnumerable<KeyValuePair<double, double>> dashStyle = null,
+			CancellationToken cancellationToken = default
+		)
+		{
+			if (jSRuntime == null)
+				throw new ArgumentNullException(nameof(jSRuntime));
+
+			if (canvasId == null)
+				throw new ArgumentNullException(nameof(canvasId));
+
+			var methodName = MethodBase
+				.GetCurrentMethod()
+				.GetCurrentMethodFullName()
+				.Replace(Async, string.Empty)
+				;
+
+			await jSRuntime.InvokeVoidAsync(
+				methodName,
+				cancellationToken,
+				new object[]
+				{
+					canvasId,
+					x,
+					y,
+					width,
+					height,
+					lineWidth,
+					strokeStyle,
+					dashStyle
+						?.SelectMany(p => new []
+						{
+							p.Key,
+							p.Value
+						})
+						?? Enumerable.Empty<double>()
+				}
+			);
+		}
+
 		public static async Task FillTextAsync(
 			IJSRuntime jSRuntime,
 			string canvasId,
@@ -50,6 +100,9 @@ namespace GameViewer.JSInteroperability
 			string fillStyle = null,
 			CanvasTextAlignment? textAlignment = null,
 			CanvasTextBaseline? textBaseline = null,
+			string shadowColor = null,
+			double? shadowOffsetX = null,
+			double? shadowOffsetY = null,
 			CancellationToken cancellationToken = default
 		)
 		{
@@ -90,6 +143,10 @@ namespace GameViewer.JSInteroperability
 							.GetName(typeof(CanvasTextBaseline), textBaseline)
 							.ToLower()
 						: null
+						,
+					shadowColor,
+					shadowOffsetX,
+					shadowOffsetY
 				}
 			);
 		}

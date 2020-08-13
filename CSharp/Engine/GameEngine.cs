@@ -17,6 +17,10 @@ namespace Engine
 
 		private CancellationTokenSource _cts;
 
+		protected int UpdateRate { get; private set; }
+
+		protected int RenderRate { get; private set; }
+
 		///	<summary>
 		///	Instantiates a new instance of <see cref="GameEngine" />.
 		///	</summary>
@@ -38,6 +42,8 @@ namespace Engine
 			var sync = DateTime.Now;
 			var frameId = 0;
 
+			var lastUpdate = DateTime.Now;
+			var lastRender = lastUpdate;
 			while (!_cts.IsCancellationRequested)
 			{
 				unchecked
@@ -70,15 +76,17 @@ namespace Engine
 
 				//	'UpdateNow' is the moment in time now after updates of objects in this engine.
 				var updateNow = DateTime.Now;
+				var updateDuration = updateNow - lastUpdate;
+				lastUpdate = updateNow;
+
+				UpdateRate = (int)(1000 / updateDuration.TotalMilliseconds);
 
 				//	Determine the time span between 'then' and 'now'.
 				var offset = updateNow - then;
 
 				//	Determine if this frame exceeded its time or threshold.
-				if (
-					offset.TotalMilliseconds <= millisecondsPerFrame
-					&& offset.TotalMilliseconds <= (_options.FrameRenderIgnoreThreshold ?? 1) * millisecondsPerFrame
-				)
+				var threshold = millisecondsPerFrame * (_options.FrameRenderIgnoreThreshold ?? 1);
+				if (offset.TotalMilliseconds <= threshold)
 				{
 					//	Since this frame completed within the allowed time,
 					//	Dispatch the 'Rendering' event.
@@ -94,13 +102,28 @@ namespace Engine
 
 #endif
 
+					var renderNow = DateTime.Now;
+					var renderDuration = renderNow - lastRender;
+					lastRender = renderNow;
+
+					RenderRate = (int)(1000 / renderDuration.TotalMilliseconds);
+				}
+				else
+				{
+					//	Rendering of this frame expired.
+
+					Console.WriteLine($"Frame {frameId} expired, exceeding {offset.TotalMilliseconds - threshold}ms!  Skipping rendering!");
 				}
 
-				var syncOffset = updateNow - sync;
-				var msOffset = (int)syncOffset.TotalMilliseconds % millisecondsPerFrame;
+				var finalNow = DateTime.Now;
+				var finalDuration = finalNow - then;
+				var remaining = millisecondsPerFrame - (int)finalDuration.TotalMilliseconds;
+
+				// var syncOffset = finalNow - sync;
+				// var msOffset = (int)syncOffset.TotalMilliseconds % millisecondsPerFrame;
 
 				//	Delay this thread for the remaining time required to remain in sync with 'sync'.
-				await Task.Delay(millisecondsPerFrame - msOffset, _cts.Token);
+				await Task.Delay(remaining, _cts.Token);
 			}
 
 			//	Destroy all resources used with the cancellation token source.

@@ -12,7 +12,7 @@ namespace GameViewer.Engines
 		: GameEngineViewer
 	{
 		private const string Font
-			= "12px 'Comic Sans MS'";
+			= "36px 'Times New Roman'";
 
 		private Dictionary<string, KeyValuePair<string, Point2D>> _keyPressDictionary
 			= new Dictionary<string, KeyValuePair<string, Point2D>>();
@@ -105,6 +105,24 @@ namespace GameViewer.Engines
 		{
 			base.OnRendering(e);
 
+			var width = await Canvas.GetWidthAsync(
+				JSRuntime,
+				CanvasId,
+				cancellationToken: CancellationToken
+			)
+				?? throw new InvalidOperationException("Cannot retrieve canvas width.")
+				;
+
+
+			var height = await Canvas.GetHeightAsync(
+				JSRuntime,
+				CanvasId,
+				cancellationToken: CancellationToken
+			)
+				?? throw new InvalidOperationException("Cannot retrieve canvas height.")
+				;
+
+			//	Render key press
 			foreach (var kvp in _keyPressDictionary)
 			{
 				var x = kvp
@@ -121,6 +139,8 @@ namespace GameViewer.Engines
 					.Value
 					.Key
 					;
+
+				Console.WriteLine($"Rendering \"{text}\" at ({x}, {y})");
 
 				await Canvas.FillTextAsync(
 					JSRuntime,

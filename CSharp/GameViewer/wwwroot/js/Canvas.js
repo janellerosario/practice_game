@@ -47,7 +47,51 @@
 			context.clearRect(0, 0, width, height);
 		}
 
-		static FillText(canvasId, text, x, y, font, fillStyle, textAlign, textBaseline) {
+		static StrokeRectangle(canvasId, x, y, width, height, lineWidth, strokeStyle, dashStyle) {
+			if (!_dataTypes.Is(canvasId, _dataTypes.String))
+				throw new GameViewer.UnexpectedDataTypeException("canvasId");
+
+			if (!_dataTypes.Is(x, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("x");
+
+			if (!_dataTypes.Is(y, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("y");
+
+			if (!_dataTypes.Is(width, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("width");
+
+			if (!_dataTypes.Is(height, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("height");
+
+			var context = GetContextByCanvasId(canvasId);
+			if (context == null)
+				return;
+
+			if (_dataTypes.Is(lineWidth, _dataTypes.Number))
+				context.lineWidth = lineWidth;
+
+			if (_dataTypes.Is(strokeStyle, _dataTypes.String))
+				context.strokeStyle = strokeStyle;
+
+			if (Array.isArray(dashStyle))
+				context.setLineDash(dashStyle);
+
+			context.strokeRect(x, y, width, height);
+		}
+
+		static FillText(
+			canvasId,
+			text,
+			x,
+			y,
+			font,
+			fillStyle,
+			textAlign,
+			textBaseline,
+			shadowColor,
+			shadowOffsetX,
+			shadowOffsetY
+		) {
 			if (!_dataTypes.Is(canvasId, _dataTypes.String))
 				throw new GameViewer.UnexpectedDataTypeException("canvasId");
 
@@ -75,6 +119,15 @@
 
 			if (_dataTypes.Is(textBaseline, _dataTypes.String))
 				context.textBaseline = textBaseline;
+
+			if (_dataTypes.Is(shadowColor, _dataTypes.String))
+				context.shadowColor = shadowColor;
+
+			if (_dataTypes.Is(shadowOffsetX, _dataTypes.Number))
+				context.shadowOffsetX = shadowOffsetX;
+
+			if (_dataTypes.Is(shadowOffsetY, _dataTypes.Number))
+				context.shadowOffsetY = shadowOffsetY;
 
 			context.fillText(text, x, y);
 		}
