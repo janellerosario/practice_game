@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Engine;
 using Engine.Mathematics;
 using GameViewer.JSInteroperability;
@@ -16,6 +17,9 @@ namespace GameViewer.Engines
 
 		private Dictionary<string, KeyValuePair<string, Point2D>> _keyPressDictionary
 			= new Dictionary<string, KeyValuePair<string, Point2D>>();
+
+		private Queue<KeyValuePair<DateTime, Point2D>> _mouseTrails
+			= new Queue<KeyValuePair<DateTime, Point2D>>();
 
 		public UnloadedGameEngineViewer(
 			GameEngineOptions options,
@@ -59,28 +63,22 @@ namespace GameViewer.Engines
 
 			var keyText = e.Code;
 
-			// var textMetrics = await Canvas.MeasureTextAsync(
-			// 	JSRuntime,
-			// 	CanvasId,
-			// 	keyText,
-			// 	font: Font,
-			// 	cancellationToken: CancellationToken
-			// );
+			var textMetrics = await Canvas.MeasureTextAsync(
+				JSRuntime,
+				CanvasId,
+				keyText,
+				font: Font,
+				cancellationToken: CancellationToken
+			);
 
-			// width -= textMetrics.Width;
-			// height -= textMetrics.ActualBoundingBoxAscent;
-
-			var someWidth = width * 0.50d;
-			var someHeight = height * 0.50d;
-
-			width -= someWidth / 2;
-			height -= someHeight / 2;
+			width -= textMetrics.Width;
+			height -= textMetrics.ActualBoundingBoxAscent;
 
 			var random = new Random();
 			var randomPoint = new Point2D
 			{
-				X = someWidth + width * random.NextDouble(),
-				Y = someHeight + height * random.NextDouble()
+				X = width * random.NextDouble(),
+				Y = height * random.NextDouble()
 			};
 
 			_keyPressDictionary.Add(
@@ -99,6 +97,34 @@ namespace GameViewer.Engines
 
 			Console.WriteLine($"{nameof(OnCanvasKeyUp)}: {e.Code}");
 			_keyPressDictionary.Remove(e.Code);
+		}
+
+		protected internal override async void OnCanvasMouseMove(MouseEventArgs e)
+		{
+			const int Threshold
+				= 30;
+
+			var point = await Canvas.GetMousePosition(
+				JSRuntime,
+				CanvasId,
+				e.ClientX,
+				e.ClientY,
+				cancellationToken: CancellationToken
+			);
+
+			_mouseTrails.Enqueue(
+				new KeyValuePair<DateTime, Point2D>(
+					DateTime.Now,
+					new Point2D
+					{
+						X = point.X,
+						Y = point.Y
+					}
+				)
+			);
+
+			if (_mouseTrails.Count > Threshold)
+				_mouseTrails.Dequeue();
 		}
 
 		protected override async void OnRendering(RenderingEventArgs e)
@@ -123,6 +149,14 @@ namespace GameViewer.Engines
 				;
 
 			//	Render key press
+			await RenderKeyPressAsync();
+
+			//	Render mouse
+			await RenderMouseAsync();
+		}
+
+		protected async Task RenderKeyPressAsync()
+		{
 			foreach (var kvp in _keyPressDictionary)
 			{
 				var x = kvp
@@ -140,8 +174,6 @@ namespace GameViewer.Engines
 					.Key
 					;
 
-				Console.WriteLine($"Rendering \"{text}\" at ({x}, {y})");
-
 				await Canvas.FillTextAsync(
 					JSRuntime,
 					CanvasId,
@@ -154,7 +186,53 @@ namespace GameViewer.Engines
 					cancellationToken: CancellationToken
 				);
 			}
+		}
 
+		protected async Task RenderMouseAsync()
+		{
+			//	Cursor size
+			const double CursorSize
+				= 2.5;
+
+			//	Five seconds.
+			var fadeThreshold = new TimeSpan(0, 0, 10);
+
+			var now = DateTime.Now;
+
+			foreach (var mouseTrail in _mouseTrails)
+			{
+				var duration = now - mouseTrail.Key;
+
+				if (duration > fadeThreshold)
+					continue;
+
+				var alpha = ((int)(255d * duration.Ticks / fadeThreshold.Ticks))
+					.ToString("X2")
+					;
+				var strokeStyle = (now.Second % 3) switch
+				{
+					0 => $"#FF{alpha}{alpha}",
+					1 => $"#{alpha}FF{alpha}",
+					_ => $"#{alpha}{alpha}FF"
+				};
+
+				await Canvas.StrokeCircleAsync(
+					JSRuntime,
+					CanvasId,
+					mouseTrail
+						.Value
+						.X
+						,
+					mouseTrail
+						.Value
+						.Y
+						,
+					CursorSize,
+					lineWidth: CursorSize / 2,
+					strokeStyle: strokeStyle,
+					cancellationToken: CancellationToken
+				);
+			}
 		}
 
 		protected override void OnUpdating(UpdatingEventArgs e)

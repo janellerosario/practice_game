@@ -7,6 +7,7 @@ using System.Threading;
 using GameViewer.Extensions;
 using System.Collections.Generic;
 using System.Linq;
+using Engine.Mathematics;
 
 namespace GameViewer.JSInteroperability
 {
@@ -38,6 +39,102 @@ namespace GameViewer.JSInteroperability
 				new object[]
 				{
 					canvasId
+				}
+			);
+		}
+
+		public static async Task<Point2D> GetMousePosition(
+			IJSRuntime jSRuntime,
+			string canvasId,
+			double clientX,
+			double clientY,
+			CancellationToken cancellationToken = default
+		)
+		{
+			if (jSRuntime == null)
+				throw new ArgumentNullException(nameof(jSRuntime));
+
+			if (canvasId == null)
+				throw new ArgumentNullException(nameof(canvasId));
+
+			var methodName = MethodBase
+				.GetCurrentMethod()
+				.GetCurrentMethodFullName()
+				.Replace(Async, string.Empty)
+				;
+
+			var jsonElement = await jSRuntime.InvokeAsync<JsonElement>(
+				methodName,
+				cancellationToken,
+				new object[]
+				{
+					canvasId,
+					clientX,
+					clientY
+				}
+			);
+			var json = jsonElement.ToString();
+			var point = JsonSerializer.Deserialize<Point2D>(
+				json,
+				new JsonSerializerOptions
+				{
+					PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+				}
+			);
+
+			return point;
+		}
+
+		public static async Task StrokeCircleAsync(
+			IJSRuntime jSRuntime,
+			string canvasId,
+			double x,
+			double y,
+			double radius,
+			double start = 0d,
+			double end = 2 * Math.PI,
+			bool? counterClockwise = false,
+			double? lineWidth = null,
+			string strokeStyle = null,
+			IEnumerable<KeyValuePair<double, double>> dashStyle = null,
+			CancellationToken cancellationToken = default
+		)
+		{
+			if (jSRuntime == null)
+				throw new ArgumentNullException(nameof(jSRuntime));
+
+			if (canvasId == null)
+				throw new ArgumentNullException(nameof(canvasId));
+
+			var methodName = MethodBase
+				.GetCurrentMethod()
+				.GetCurrentMethodFullName()
+				.Replace(Async, string.Empty)
+				;
+
+			await jSRuntime.InvokeVoidAsync(
+				methodName,
+				cancellationToken,
+				new object[]
+				{
+					canvasId,
+					x,
+					y,
+					radius,
+					start,
+					end,
+					counterClockwise
+						?? false
+						,
+					lineWidth,
+					strokeStyle,
+					dashStyle
+						?.SelectMany(p => new []
+						{
+							p.Key,
+							p.Value
+						})
+						?? Enumerable.Empty<double>()
 				}
 			);
 		}

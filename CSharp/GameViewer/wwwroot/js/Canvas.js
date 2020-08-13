@@ -47,7 +47,89 @@
 			context.clearRect(0, 0, width, height);
 		}
 
-		static StrokeRectangle(canvasId, x, y, width, height, lineWidth, strokeStyle, dashStyle) {
+		static GetMousePosition(canvasId, clientX, clientY) {
+			if (!_dataTypes.Is(canvasId, _dataTypes.String))
+				throw new GameViewer.UnexpectedDataTypeException("canvasId");
+
+			if (!_dataTypes.Is(clientX, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("clientX");
+
+			if (!_dataTypes.Is(clientY, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("clientY");
+
+			var context = GetContextByCanvasId(canvasId);
+			if (context == null)
+				return;
+
+			var rectangle = context
+				.canvas
+				.getBoundingClientRect()
+				;
+
+			return JSON.stringify({
+				x: clientX - rectangle.left,
+				y: clientY - rectangle.top
+			});
+		}
+
+		static StrokeCircle(
+			canvasId,
+			x,
+			y,
+			radius,
+			start,
+			end,
+			counterClockwise,
+			lineWidth,
+			strokeStyle,
+			dashStyle
+		) {
+			if (!_dataTypes.Is(canvasId, _dataTypes.String))
+				throw new GameViewer.UnexpectedDataTypeException("canvasId");
+
+			if (!_dataTypes.Is(x, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("x");
+
+			if (!_dataTypes.Is(y, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("y");
+
+			if (!_dataTypes.Is(radius, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("radius");
+
+			if (!_dataTypes.Is(start, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("start");
+
+			if (!_dataTypes.Is(end, _dataTypes.Number))
+				throw new GameViewer.UnexpectedDataTypeException("end");
+
+			var context = GetContextByCanvasId(canvasId);
+			if (context == null)
+				return;
+
+			if (_dataTypes.Is(lineWidth, _dataTypes.Number))
+				context.lineWidth = lineWidth;
+
+			if (_dataTypes.Is(strokeStyle, _dataTypes.String))
+				context.strokeStyle = strokeStyle;
+
+			if (Array.isArray(dashStyle))
+				context.setLineDash(dashStyle);
+
+			context.beginPath();
+			context.arc(x, y, radius, start, end, counterClockwise);
+			context.stroke();
+		}
+
+		static StrokeRectangle(
+			canvasId,
+			x,
+			y,
+			width,
+			height,
+			lineWidth,
+			strokeStyle,
+			dashStyle
+		) {
 			if (!_dataTypes.Is(canvasId, _dataTypes.String))
 				throw new GameViewer.UnexpectedDataTypeException("canvasId");
 
